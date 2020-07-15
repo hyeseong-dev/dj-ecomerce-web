@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
+import datetime
 from .models import * 
-# Create your views here.
+
 def store(request):
 
 	if request.user.is_authenticated:
@@ -30,14 +31,13 @@ def cart(request):
 	else:
 		#Create empty cart for now for non-logged in user
 		items = []
-		order = {'get_cart_total':0, 'get_cart_items':0,'shipping':False }
+		order = {'get_cart_total':0, 'get_cart_items':0, 'shipping':False}
 		cartItems = order['get_cart_items']
 
 	context = {'items':items, 'order':order, 'cartItems':cartItems}
 	return render(request, 'store/cart.html', context)
 
 def checkout(request):
-	
 	if request.user.is_authenticated:
 		customer = request.user.customer
 		order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -56,8 +56,8 @@ def updateItem(request):
 	data = json.loads(request.body)
 	productId = data['productId']
 	action = data['action']
-	print('Action:',action)
-	print('Product:',productId)
+	print('Action:', action)
+	print('Product:', productId)
 
 	customer = request.user.customer
 	product = Product.objects.get(id=productId)
@@ -71,7 +71,22 @@ def updateItem(request):
 		orderItem.quantity = (orderItem.quantity - 1)
 
 	orderItem.save()
-	
-	if orderItem.quantity <=0:
+
+	if orderItem.quantity <= 0:
 		orderItem.delete()
+
 	return JsonResponse('Item was added', safe=False)
+
+def processOrder(request):
+	transaction_id = datetime.datetime.now().timestamp()
+	data = json.loads(request.body)
+
+	if request.user.is_authenticated:
+		customer = request.user.customer
+		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+		total = float(data['form']['total'])
+		order.transaction_id = transaction_id
+	else:
+		print('User is not logged in')
+
+	return JsonResponse('Payment submitted..', safe=False)
