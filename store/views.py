@@ -90,3 +90,7 @@ def processOrder(request):
 		print('User is not logged in')
 
 	return JsonResponse('Payment submitted..', safe=False)
+
+def processOrder(request):
+  print('Data', request.body)
+  return JsonResponse('Payment Complete!', safe=False)
