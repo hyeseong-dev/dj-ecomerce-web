@@ -74,10 +74,10 @@
 		if(shipping == 'False'){
 			document.getElementById('shipping-info').innerHTML=''
 		}
-		if(user != 'AnonymouseUser'){
+		if(user != 'AnonymousUser'){
 			document.getElementById('user-info').innerHTML=''
 		}
-		if(shipping == 'False' && user != 'AnonymouseUser'){
+		if(shipping == 'False' && user != 'AnonymousUser'){
       // hide entire form user is logged in and shipping is false
 			document.getElementById('form-wrapper').classList.add('hidden');
       // show payment if logged in user wants to buy an item that does not require shipping
@@ -119,7 +119,7 @@
         shippingInfo.state = form.state.value
       }
 
-      if(user == 'AnonymouseUser'){
+      if(user == 'AnonymousUser'){
         userFormData.name = form.name.value
         userFormData.email = form.email.value
         userFormData.total = form.total.value
